@@ -112,7 +112,7 @@ def remove_lancamento(
     """
     Remove Lancamento from database
     """
-    lancamento = crud.lancamento.re(db, id=lancamento_id)
+    lancamento = crud.lancamento.get(db, id=lancamento_id)
     if not lancamento:            
         raise HTTPException(
             status_code=400, detail=f"Lançamento with ID: {lancamento_id} not found."
