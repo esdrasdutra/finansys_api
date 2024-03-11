@@ -1,37 +1,31 @@
 from typing import  Optional
-
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 import crud
-
 from api import deps
 
-from schemas.lancamento import (
-    LancamentoRemove,
-    LancamentoCreate,
-    LancamentoUpdate,
-    Lancamento
-)
-
+from schemas.lancamento import *
 router = APIRouter()
 
 @router.get("/all", status_code=200)
-def fetch_lancamentos(
-    *, 
+async def fetch_lancamentos(
+    *,
+    page: Optional[int] = Query(1, description="Page number", ge=1),
+    size: Optional[int] = Query(5, description="Items per page", ge=1),
+    sort_order: Optional[str] = Query('desc', description="Sort order (ASC or DESC)"),
     db: Session = Depends(deps.get_db),
 ) -> dict:
     """
     Fetch all Lancamentos
     """
-    results = crud.lancamento.get_all(db=db)
+    results = crud.lancamento.get_all(db=db, page=page, limit=size, sort_order=sort_order)
     if not results:
     # the exception is raised, not returned - you will get a validation
     # error otherwise.
         raise HTTPException(
             status_code=404, detail=f"Nenhum lançamento encontrado"
         )
-
     return { "data": results, "message": "Busca feita com sucesso." }
 
 

@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from api import deps
 import crud
 
-from schemas.dizimista import (
+from schemas import (
     DizimistaCreate,
     DizimistaUpdateRestricted,
 )

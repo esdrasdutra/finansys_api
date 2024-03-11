@@ -3,6 +3,7 @@ from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
+from sqlalchemy import asc, desc
 
 from db.base_class import Base
 
@@ -24,10 +25,29 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType, RemoveSche
 
     def get(self, db: Session, id: Any) -> Optional[ModelType]:
         return db.query(self.model).filter(self.model.id == id).first()
-    
-    def get_all(
-            self, db: Session) -> List[ModelType]:
-        return (db.query(self.model).order_by(self.model.id).all())
+
+    def get_all(self, db: Session, page: Optional[int] = None, limit: Optional[int] = None, sort_order: Optional[str] = None) -> List[ModelType]:
+        # Validate page and size parameters (can be customized further)
+
+        if page <= 0 or limit <= 0:
+            raise ValueError("Page and size must be positive integers.")
+
+        query = db.query(self.model)
+        print(page, limit, sort_order)
+
+        # Apply sorting logic based on sort_by and sort_order
+        if sort_order and sort_order.upper() == "DESC":
+            query = query.order_by(desc(getattr(self.model, 'id')))
+        else:
+            query = query.order_by(asc(getattr(self.model, 'id')))
+
+        # Apply pagination using offset and limit
+        query = query.offset((page - 1) * limit).limit(limit)
+
+        # Apply pagination using SQLAlchemy offset and limit
+        results = query.all()
+
+        return results
 
     def get_multi(
         self, db: Session, *, skip: int = 0, limit: int = 5000

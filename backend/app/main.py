@@ -1,13 +1,14 @@
+from contextlib import asynccontextmanager
 from pathlib import Path
+import select
 import time
+import typing
 
-from fastapi import FastAPI, APIRouter, Request, Depends
-from sqlalchemy.orm import Session
+from fastapi import FastAPI, APIRouter, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.api_v1.api import api_router
 from core.config import settings
-
 
 BASE_PATH = Path(__file__).resolve().parent
 
@@ -24,12 +25,6 @@ if settings.BACKEND_CORS_ORIGINS:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-
-@root_router.get("/", status_code=200)
-def root(
-    request: Request,
-) -> dict:
-    return {"request": request, "obreiros": "Lista de Obreiros"}
 
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):

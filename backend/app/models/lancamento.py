@@ -1,7 +1,5 @@
 from sqlalchemy import Column, Integer, String, Date
-
 from app.db.base_class import Base
-
 from utils import date_time
 
 class Lancamento(Base):
