@@ -37,9 +37,9 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType, RemoveSche
 
         # Apply sorting logic based on sort_by and sort_order
         if sort_order and sort_order.upper() == "DESC":
-            query = query.order_by(desc(getattr(self.model, 'id')))
+            query = query.order_by(desc(getattr(self.model, 'data_lan')))
         else:
-            query = query.order_by(asc(getattr(self.model, 'id')))
+            query = query.order_by(asc(getattr(self.model, 'data_lan')))
 
         # Apply pagination using offset and limit
         query = query.offset((page - 1) * limit).limit(limit)
