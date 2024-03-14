@@ -24,7 +24,7 @@ def fetch_lancamentos(
     """
     Fetch all Lancamentos
     """
-    results = crud.lancamento.get_all(db=db)
+    results = crud.lancamento.get_all_by_month(db=db)
     if not results:
     # the exception is raised, not returned - you will get a validation
     # error otherwise.

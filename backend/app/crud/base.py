@@ -3,6 +3,7 @@ from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
+from sqlalchemy import asc, desc
 
 from db.base_class import Base
 
@@ -28,6 +29,10 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType, RemoveSche
     def get_all(
             self, db: Session) -> List[ModelType]:
         return (db.query(self.model).order_by(self.model.id).all())
+    
+    def get_all_by_month(
+            self, db: Session) -> List[ModelType]:
+        return (db.query(self.model).order_by(asc(self.model.data_lan)).all())
 
     def get_multi(
         self, db: Session, *, skip: int = 0, limit: int = 5000
