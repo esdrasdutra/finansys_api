@@ -1,3 +1,4 @@
+import functools
 from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
 
 from fastapi.encoders import jsonable_encoder
@@ -7,21 +8,6 @@ from sqlalchemy import asc, desc, extract
 from datetime import date
 
 from db.base_class import Base
-
-meses = {
-    1: "Janeiro",
-    2: "Fevereiro",
-    3: "Março",
-    4: "Abril",
-    5: "Maio",
-    6: "Junho",
-    7: "Julho",
-    8: "Agosto",
-    9: "Setembro",
-    10: "Outubro",
-    11: "Novembro",
-    12: "Dezembro"
-}
 
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
@@ -48,7 +34,14 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType, RemoveSche
     
     def get_all_by_month(
             self, db: Session) -> List[ModelType]:
-        return (db.query(self.model).order_by(desc(self.model.data_lan)).all())
+        today = date.today()
+        current_month = today.month
+        return (
+            db.query(self.model)
+            .filter(extract('month', self.model.data_lan) == current_month)
+            .order_by(desc(self.model.data_lan))
+            .all()
+        )
 
     def get_multi(
         self, db: Session, *, skip: int = 0, limit: int = 5000
