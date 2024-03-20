@@ -4,6 +4,7 @@ import sqlalchemy.types as types
 
 class MyDateTime(types.TypeDecorator):
     impl = types.DateTime
+    cache_ok = True
     
     def process_bind_param(self, value, dialect):
         if type(value) is str:
