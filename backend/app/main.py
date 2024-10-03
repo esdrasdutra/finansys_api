@@ -2,6 +2,7 @@ from pathlib import Path
 import time
 
 from fastapi import FastAPI, APIRouter, Request, Depends
+from fastapi_pagination import add_pagination
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 

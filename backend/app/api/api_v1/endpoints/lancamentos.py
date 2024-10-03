@@ -1,13 +1,19 @@
 from typing import  Optional
+from fastapi import APIRouter, Depends, HTTPException
 
-from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
+from fastapi_pagination.ext.sqlalchemy import paginate
+
+from sqlalchemy import Enum, select
+
+from fastapi_pagination import Page
 
 import crud
 
 from api import deps
 
 from schemas.lancamento import (
+    LancamentoBase,
     LancamentoRemove,
     LancamentoCreate,
     LancamentoUpdate,
@@ -16,23 +22,25 @@ from schemas.lancamento import (
 
 router = APIRouter()
 
-@router.get("/all", status_code=200)
-def fetch_lancamentos(
-    *, 
-    db: Session = Depends(deps.get_db),
-) -> dict:
-    """
-    Fetch all Lancamentos
-    """
-    results = crud.lancamento.get_all(db=db)
-    if not results:
-    # the exception is raised, not returned - you will get a validation
-    # error otherwise.
+@router.get("/all", name="Retorna todas as informações da tabela Lançamentos",
+            status_code=200,
+            #response_model=Page[Lancamento]
+            )
+async def get_lancamentos(
+    *,
+    #pagination=Depends(fastapi_pagination.add_pagination),
+    db: Session = Depends(deps.get_db)
+    ) -> dict:
+    result = crud.lancamento.get_all(db=db)
+
+    if not result:
+        # the exception is raised, not returned - you will get a validation
+        # error otherwise.
         raise HTTPException(
-            status_code=404, detail=f"Nenhum lançamento encontrado"
+            status_code=404, detail=f"Lancamento  not found"
         )
 
-    return { "data": results, "message": "Busca feita com sucesso." }
+    return result
 
 
 @router.get("/{lancamento_id}", status_code=200)
@@ -42,7 +50,7 @@ def fetch_lancamento(
     db: Session = Depends(deps.get_db),
 ) -> dict:
     """
-    Fetch a single Obreiro by ID
+    Fetch a single Lancamento by ID
     """
     result = crud.lancamento.get(db=db, id=lancamento_id)
     if not result:
@@ -57,17 +65,17 @@ def fetch_lancamento(
 @router.get("/search/", status_code=200)
 def search_lancamentos(
     *,
-    keyword: str = Query(None, min_length=3, example="Recibo Nº"),
+    #keyword: str = Query(None, min_length=3, example="Recibo Nº"),
     max_results: Optional[int] = 10,
+    page: Optional[int] = 20,
     db: Session = Depends(deps.get_db),
 ) -> dict:
     """
     Search for Lancamentos based on label keyword
     """
-    lancamentos = crud.lancamento.get_multi(db=db, limit=max_results)
-    results = filter(lambda lancamento: keyword.lower() in lancamentos.label.lower(), lancamentos)
+    lancamentos = crud.lancamento.get_multi(db=db, page=page, size=max_results)
 
-    return {"results": list(results)}
+    return {"results": list(lancamentos)}
 
 
 @router.post("/", status_code=201)

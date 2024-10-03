@@ -1,13 +1,18 @@
-import functools
-from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
+from typing import Annotated, Any, Dict, Generic, List, Optional, Type, TypeVar, Union
 
+from fastapi import Depends, Query
 from fastapi.encoders import jsonable_encoder
+
+from fastapi_pagination import Page
+from fastapi_pagination.ext.sqlalchemy import paginate
+
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from sqlalchemy import asc, desc, extract
+from sqlalchemy import asc, desc, extract, select
 from datetime import date
 
 from db.base_class import Base
+from schemas.paginacao import Pagination, pagination_params
 
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
@@ -29,8 +34,11 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType, RemoveSche
         return db.query(self.model).filter(self.model.id == id).first()
     
     def get_all(
-            self, db: Session) -> List[ModelType]:
+            self, 
+            db: Session,
+            pagination: Annotated[Pagination, Depends(pagination_params)])-> List[ModelType]:
         return (db.query(self.model).order_by(self.model.id).all())
+
     
     def get_all_by_month(
             self, db: Session) -> List[ModelType]:
@@ -44,11 +52,13 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType, RemoveSche
         )
 
     def get_multi(
-        self, db: Session, *, skip: int = 0, limit: int = 5000
-    ) -> List[ModelType]:
-        return (
-            db.query(self.model).order_by(self.model.id).offset(skip).limit(limit).all()
-        )
+        self, db: Session, *, 
+        page: Optional[int] = Query(default=1, description="Page number"),
+        size: Optional[int] = Query(default=10, description="Items per page")
+    ) -> Page:
+        query = db.query(self.model).order_by(self.model.id)
+        results = paginate(query=query, )
+        return results
 
     def create(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in)
