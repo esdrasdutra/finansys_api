@@ -1,8 +1,7 @@
 
 from fastapi.params import Query
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy import Enum
-
 
 class SortEnum(Enum):
     ASC = 'asc',
@@ -11,10 +10,11 @@ class SortEnum(Enum):
 class Pagination(BaseModel):
     perPage: int
     page: int
-    order: SortEnum
+    order: str
 
     class Config:
         arbitrary_types_allowed = True
+        
     
 def pagination_params(
     page: int = Query(ge=1, required=False, default=1),

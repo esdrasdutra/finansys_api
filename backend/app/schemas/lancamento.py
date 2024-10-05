@@ -101,6 +101,9 @@ class Lancamento(LancamentoInDBBase):
 class LancamentoInDB(LancamentoInDBBase):
     pass
 
-
 class LancamentoSearchResults(BaseModel):
     results: Sequence[Lancamento]
+
+class LancamentosList(BaseModel):
+    page: int
+    lancamentos: list[Lancamento]

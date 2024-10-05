@@ -12,7 +12,6 @@ from sqlalchemy import asc, desc, extract, select
 from datetime import date
 
 from db.base_class import Base
-from schemas.paginacao import Pagination, pagination_params
 
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
@@ -33,23 +32,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType, RemoveSche
     def get(self, db: Session, id: Any) -> Optional[ModelType]:
         return db.query(self.model).filter(self.model.id == id).first()
     
-    def get_all(
-            self, 
-            db: Session,
-            pagination: Annotated[Pagination, Depends(pagination_params)])-> List[ModelType]:
+    def get_all(self, db: Session)-> List[ModelType]:
         return (db.query(self.model).order_by(self.model.id).all())
-
-    
-    def get_all_by_month(
-            self, db: Session) -> List[ModelType]:
-        today = date.today()
-        current_month = today.month
-        return (
-            db.query(self.model)
-            .filter(extract('month', self.model.data_lan) == current_month)
-            .order_by(desc(self.model.data_lan))
-            .all()
-        )
 
     def get_multi(
         self, db: Session, *, 

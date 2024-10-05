@@ -1,10 +1,11 @@
-from typing import  Optional
+from math import ceil
+from typing import  Annotated, Optional
 from fastapi import APIRouter, Depends, HTTPException
 
 from sqlalchemy.orm import Session
 from fastapi_pagination.ext.sqlalchemy import paginate
 
-from sqlalchemy import Enum, select
+from sqlalchemy import Enum, asc, desc, func, select
 
 from fastapi_pagination import Page
 
@@ -17,31 +18,49 @@ from schemas.lancamento import (
     LancamentoRemove,
     LancamentoCreate,
     LancamentoUpdate,
-    Lancamento
+    Lancamento,
+    LancamentosList
 )
+from schemas.paginacao import Pagination, SortEnum, pagination_params
 
 router = APIRouter()
 
-@router.get("/all", name="Retorna todas as informações da tabela Lançamentos",
+@router.get("/", 
+            name="Retorna, de forma paginada, as informações dos lançamentos", 
             status_code=200,
-            #response_model=Page[Lancamento]
             )
-async def get_lancamentos(
+def get_lancamentos(
     *,
-    #pagination=Depends(fastapi_pagination.add_pagination),
-    db: Session = Depends(deps.get_db)
-    ) -> dict:
+    db: Session = Depends(deps.get_db),
+    perPage: Optional[int],
+    page: Optional[int],
+    order: str = 'asc'
+    ):
+        
+        result = crud.lancamento.get_all_page(db=db, perPage=perPage, page=page, order=order)
+
+        if not result:
+            # the exception is raised, not returned - you will get a validation
+            # error otherwise.
+            raise HTTPException(
+                status_code=404, detail=f"Lancamento  not found"
+            )
+
+        return result
+
+@router.get("/all", name="Retorna todas as informações dos lançamentos", status_code=200)
+def get_all(*, db: Session = Depends(deps.get_db)):
+    
     result = crud.lancamento.get_all(db=db)
 
     if not result:
-        # the exception is raised, not returned - you will get a validation
-        # error otherwise.
-        raise HTTPException(
-            status_code=404, detail=f"Lancamento  not found"
-        )
+            # the exception is raised, not returned - you will get a validation
+            # error otherwise.
+            raise HTTPException(
+                status_code=404, detail=f"Lancamento  not found"
+            )
 
     return result
-
 
 @router.get("/{lancamento_id}", status_code=200)
 def fetch_lancamento(
