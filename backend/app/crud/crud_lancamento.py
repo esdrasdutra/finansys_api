@@ -2,6 +2,7 @@ from typing import List
 
 from sqlalchemy import asc, desc, extract, func, select
 from sqlalchemy.orm import Session
+from datetime import datetime
 
 from crud.base import CRUDBase, ModelType
 from models.lancamento import Lancamento
@@ -12,6 +13,8 @@ class CRUDlancamento(CRUDBase[Lancamento, LancamentoCreate, LancamentoUpdate, La
 
     def get_all_page( self, db: Session, perPage, page, order)-> List[ModelType]:
         order = desc if order == SortEnum.DESC else asc
+        print(perPage, order.__name__, page)
+
         query_entradas = db.query(self.model
                 ).order_by(order(self.model.data_lan)
                 ).filter(self.model.entrada != '-'
@@ -69,6 +72,32 @@ class CRUDlancamento(CRUDBase[Lancamento, LancamentoCreate, LancamentoUpdate, La
         
         lancamentos_list = {
             "length": count,
+            "entradas": entradas,
+            "saidas": saidas
+        }
+
+        return lancamentos_list
+    
+    def get_all_crude(self, db: Session)-> List[ModelType]:
+        # Data inicial e final do período
+        data_inicial = datetime(2024, 6, 1)
+        data_final = datetime(2024, 12, 31)
+        print('Chamando ALL CRUDE')
+
+        query_entradas = db.query(self.model
+            ).filter(self.model.entrada != '-'
+            ).filter(self.model.data_lan > data_inicial)
+        #.filter(self.model.data_lan.between(data_inicial, data_final))
+        
+        query_saidas = db.query(
+            self.model.saida,
+            ).group_by(self.model.saida, extract('month', self.model.data_lan)
+            ).filter(self.model.saida != '-')
+
+        entradas = query_entradas.all()
+        saidas = query_saidas.all()
+
+        lancamentos_list = {
             "entradas": entradas,
             "saidas": saidas
         }

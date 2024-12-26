@@ -52,14 +52,24 @@ def get_lancamentos(
 def get_all(*, db: Session = Depends(deps.get_db)):
     
     result = crud.lancamento.get_all(db=db)
-
     if not result:
             # the exception is raised, not returned - you will get a validation
             # error otherwise.
             raise HTTPException(
                 status_code=404, detail=f"Lancamento  not found"
             )
+    return result
 
+@router.get("/all_crude", name="Retorna todas as informações dos lançamentos", status_code=200)
+def get_all_crude(*, db: Session = Depends(deps.get_db)):
+    
+    result = crud.lancamento.get_all_crude(db=db)
+    if not result:
+            # the exception is raised, not returned - you will get a validation
+            # error otherwise.
+            raise HTTPException(
+                status_code=404, detail=f"Lancamento  not found"
+            )
     return result
 
 @router.get("/{lancamento_id}", status_code=200)
