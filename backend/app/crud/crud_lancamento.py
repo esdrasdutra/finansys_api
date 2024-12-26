@@ -90,9 +90,10 @@ class CRUDlancamento(CRUDBase[Lancamento, LancamentoCreate, LancamentoUpdate, La
         #.filter(self.model.data_lan.between(data_inicial, data_final))
         
         query_saidas = db.query(
-            self.model.saida,
-            ).group_by(self.model.saida, extract('month', self.model.data_lan)
-            ).filter(self.model.saida != '-')
+            self.model
+            #).group_by(self.model.saida, extract('month', self.model.data_lan)
+            ).filter(self.model.saida != '-'
+            ).filter(self.model.data_lan > data_inicial)
 
         entradas = query_entradas.all()
         saidas = query_saidas.all()
