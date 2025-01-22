@@ -89,7 +89,7 @@ def fetch_lancamento(
             status_code=404, detail=f"Lancamento with ID {lancamento_id} not found"
         )
 
-    return result
+    return result.to_dict()
 
 @router.get("/search/", status_code=200)
 def search_lancamentos(
