@@ -19,12 +19,13 @@ app = FastAPI(title="Finansys ADNA", openapi_url=f"{settings.API_V1_STR}/openapi
 if settings.BACKEND_CORS_ORIGINS:
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[str(origin) for origin in settings.BACKEND_CORS_ORIGINS],
-        allow_origin_regex=settings.BACKEND_CORS_ORIGIN_REGEX,
+        allow_origins=settings.BACKEND_CORS_ORIGINS,  # Lista de origens permitidas
+        allow_origin_regex=settings.BACKEND_CORS_ORIGIN_REGEX,  # Regex para domínios dinâmicos
         allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_methods=["*"],  # Permitir todos os métodos (GET, POST, etc.)
+        allow_headers=["*"],  # Permitir todos os headers
     )
+
 
 @root_router.get("/", status_code=200)
 def root(

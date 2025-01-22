@@ -23,4 +23,7 @@ class Lancamento(Base):
     tipo_lanc = Column(String(256),nullable=False)
     historico = Column(String(256),nullable=False)
     status_lanc = Column(String(256),nullable=False)
+
+    def to_dict(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
     

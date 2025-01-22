@@ -80,20 +80,20 @@ class CRUDlancamento(CRUDBase[Lancamento, LancamentoCreate, LancamentoUpdate, La
     
     def get_all_crude(self, db: Session)-> List[ModelType]:
         # Data inicial e final do período
-        data_inicial = datetime(2024, 6, 1)
-        data_final = datetime(2024, 12, 31)
+        #data_inicial = datetime(2024, 6, 1)
+        #data_final = datetime(2024, 12, 31)
         print('Chamando ALL CRUDE')
 
         query_entradas = db.query(self.model
             ).filter(self.model.entrada != '-'
-            ).filter(self.model.data_lan > data_inicial)
+            )
         #.filter(self.model.data_lan.between(data_inicial, data_final))
         
         query_saidas = db.query(
             self.model
             #).group_by(self.model.saida, extract('month', self.model.data_lan)
             ).filter(self.model.saida != '-'
-            ).filter(self.model.data_lan > data_inicial)
+            )#.filter(self.model.data_lan > data_inicial)
 
         entradas = query_entradas.all()
         saidas = query_saidas.all()

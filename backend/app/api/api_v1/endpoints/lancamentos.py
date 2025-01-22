@@ -118,7 +118,7 @@ def create_lancamento(
     """
     lancamento = crud.lancamento.create(db=db, obj_in=lancamento_in)
 
-    return lancamento
+    return lancamento.to_dict()
 
 
 @router.put("/", status_code=201)
@@ -138,7 +138,7 @@ def update_lancamento(
         )
     updated_lancamento = crud.lancamento.update(db=db, db_obj=lancamento, obj_in=lancamento_in)
 
-    return updated_lancamento
+    return updated_lancamento.to_dict()
 
 @router.delete('/{lancamento_id}', status_code=200)
 def remove_lancamento(
