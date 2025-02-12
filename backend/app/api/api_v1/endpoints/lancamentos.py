@@ -156,4 +156,4 @@ def remove_lancamento(
         )
     lancamento_removed = crud.lancamento.remove(db=db, id=lancamento_id)
 
-    return lancamento_removed
+    return lancamento_removed.to_dict()
