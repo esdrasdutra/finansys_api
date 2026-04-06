@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, Date
 
 from app.db.base_class import Base
 
-from utils import date_time
+from app.utils import date_time
 
 class Lancamento(Base):
     id = Column(Integer, primary_key=True, index=True)

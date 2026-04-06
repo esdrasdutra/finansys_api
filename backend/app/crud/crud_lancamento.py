@@ -4,10 +4,10 @@ from sqlalchemy import asc, desc, extract, func, select
 from sqlalchemy.orm import Session
 from datetime import datetime
 
-from crud.base import CRUDBase, ModelType
-from models.lancamento import Lancamento
-from schemas.lancamento import LancamentoCreate, LancamentoUpdate, LancamentoRemove
-from schemas.paginacao import SortEnum
+from app.crud.base import CRUDBase, ModelType
+from app.models.lancamento import Lancamento
+from app.schemas.lancamento import LancamentoCreate, LancamentoUpdate, LancamentoRemove
+from app.schemas.paginacao import SortEnum
 
 class CRUDlancamento(CRUDBase[Lancamento, LancamentoCreate, LancamentoUpdate, LancamentoRemove]):
 

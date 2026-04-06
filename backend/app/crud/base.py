@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import asc, desc, extract, select
 from datetime import date
 
-from db.base_class import Base
+from app.db.base_class import Base
 
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)

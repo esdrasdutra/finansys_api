@@ -1,6 +1,6 @@
-from crud.base import CRUDBase
-from models.historico import Historico
-from schemas.historico import HistoricoCreate, HistoricoUpdate, HistoricoRemove
+from app.crud.base import CRUDBase
+from app.models.historico import Historico
+from app.schemas.historico import HistoricoCreate, HistoricoUpdate, HistoricoRemove
 
 class CRUDHistorico(CRUDBase[Historico, HistoricoCreate, HistoricoUpdate, HistoricoRemove]):
     ...

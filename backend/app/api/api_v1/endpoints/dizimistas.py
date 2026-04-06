@@ -3,10 +3,10 @@ from typing import Any, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from api import deps
-import crud
+from app.api import deps
+import app.crud
 
-from schemas.dizimista import (
+from app.schemas.dizimista import (
     DizimistaCreate,
     DizimistaUpdateRestricted,
 )

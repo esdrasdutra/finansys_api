@@ -5,10 +5,10 @@ import httpx
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-import crud
-from api import deps
+import app.crud
+from app.api import deps
 
-from schemas.obreiro import (
+from app.schemas.obreiro import (
     Obreiro,
     ObreiroCreate,
     ObreiroSearchResults,

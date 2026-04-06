@@ -9,11 +9,11 @@ from sqlalchemy import Enum, asc, desc, func, select
 
 from fastapi_pagination import Page
 
-import crud
+import app.crud
 
-from api import deps
+from app.api import deps
 
-from schemas.lancamento import (
+from app.schemas.lancamento import (
     LancamentoBase,
     LancamentoRemove,
     LancamentoCreate,
@@ -21,7 +21,7 @@ from schemas.lancamento import (
     Lancamento,
     LancamentosList
 )
-from schemas.paginacao import Pagination, SortEnum, pagination_params
+from app.schemas.paginacao import Pagination, SortEnum, pagination_params
 
 router = APIRouter()
 
