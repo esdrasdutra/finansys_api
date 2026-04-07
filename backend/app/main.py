@@ -6,8 +6,8 @@ from fastapi_pagination import add_pagination
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.api_v1.api import api_router
-from core.config import settings
+from app.api.api_v1.api import api_router
+from app.core.config import settings
 
 
 BASE_PATH = Path(__file__).resolve().parent
@@ -19,7 +19,8 @@ app = FastAPI(title="Finansys ADNA", openapi_url=f"{settings.API_V1_STR}/openapi
 if settings.BACKEND_CORS_ORIGINS:
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.BACKEND_CORS_ORIGINS,  # Lista de origens permitidas
+        # allow_origins=settings.BACKEND_CORS_ORIGINS,  # Lista de origens permitidas
+        allow_origins=["*"],
         allow_origin_regex=settings.BACKEND_CORS_ORIGIN_REGEX,  # Regex para domínios dinâmicos
         allow_credentials=True,
         allow_methods=["*"],  # Permitir todos os métodos (GET, POST, etc.)
@@ -48,4 +49,4 @@ if __name__ == "__main__":
     # Use this for debugging purposes only
     import uvicorn
 
-    uvicorn.run("main:app", host="0.0.0.0", port=8001, reload=True)
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8001)
